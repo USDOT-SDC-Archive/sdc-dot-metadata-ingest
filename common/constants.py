@@ -29,6 +29,7 @@ class Constants:
     TRAFFIC_TYPE_REFERENCE = "TrafficType"
     TABLE_NAME_REFERENCE = "TableName"
     CURATION_VERSION = "20171031"
+    ENVIRONMENT_NAME = "Environment"
 
     def __setattr__(self, attr, value):
         if hasattr(self, attr):

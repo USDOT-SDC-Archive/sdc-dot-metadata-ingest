@@ -9,7 +9,7 @@ from common.constants import *
 from common.logger_utility import *
 
 
-class HandleBucketEvent():
+class HandleBucketEvent:
 
     def __fetchS3DetailsFromEvent(self, event):
         try:
@@ -31,7 +31,9 @@ class HandleBucketEvent():
             response = s3_client.head_object(Bucket=bucket_name, Key=object_key)
         except ClientError as e:
             LoggerUtility.logError(e)
-            LoggerUtility.logError('Error getting object {} from bucket {}. Make sure they exist, your bucket is in the same region as this function and necessary permissions have been granted.'.format(object_key, bucket_name))
+            LoggerUtility.logError('Error getting object {} from bucket {}. Make sure they exist, '
+                                   'your bucket is in the same region as this function and necessary permissions '
+                                   'have been granted.'.format(object_key, bucket_name))
             raise e
         else:
             return response
@@ -45,21 +47,29 @@ class HandleBucketEvent():
             Constants.CONTENT_TYPE_REFERENCE: s3_head_object[Constants.CONTENT_TYPE_REFERENCE],
             Constants.ETAG_REFERENCE: s3_head_object[Constants.ETAG_REFERENCE],
             Constants.DATASET_REFERENCE: key.split('/')[0],
-            Constants.STATE_REFERENCE: key.split('/state=')[1].split('/')[0]
+            Constants.ENVIRONMENT_NAME: os.environ["ENVIRONMENT_NAME"]
         }
 
         if 'type' in key:
-            typeValue = key.split('/type=')[1].split('/')[0]
-            typeMetadata = {
-                Constants.TRAFFIC_TYPE_REFERENCE: typeValue
+            type_value = key.split('/type=')[1].split('/')[0]
+            type_metadata = {
+                Constants.TRAFFIC_TYPE_REFERENCE: type_value
             }
-            metadata.update(typeMetadata)
-        elif 'table' in key:
-            tableValue = key.split('/table=')[1].split('/')[0]
-            tableMetadata = {
-                Constants.TABLE_NAME_REFERENCE: tableValue
+            metadata.update(type_metadata)
+
+        if 'table' in key:
+            table_value = key.split('/table=')[1].split('/')[0]
+            table_metadata = {
+                Constants.TABLE_NAME_REFERENCE: table_value
             }
-            metadata.update(tableMetadata)
+            metadata.update(table_metadata)
+
+        if 'state' in key:
+            state_value = key.split('/state=')[1].split('/')[0]
+            state_metadata = {
+                Constants.STATE_REFERENCE: state_value
+            }
+            metadata.update(state_metadata)
 
         LoggerUtility.logInfo("METADATA: "+str(metadata))
         return metadata
