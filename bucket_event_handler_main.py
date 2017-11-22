@@ -13,6 +13,7 @@ def lambda_handler(event, context):
         client = boto3.client('lambda')
         LoggerUtility.logInfo("Invoking Curation lambda function")
         response = client.invoke(FunctionName=curation_lambda_function_name,
-                                 InvocationType='Event')
+                                 InvocationType='Event',
+                                 Payload=json.dumps(event))
         LoggerUtility.logInfo("Response from invoked lambda function - {}".format(response))
 
