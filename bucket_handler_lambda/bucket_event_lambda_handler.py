@@ -50,26 +50,40 @@ class HandleBucketEvent:
             Constants.ENVIRONMENT_NAME: os.environ["ENVIRONMENT_NAME"]
         }
 
-        if 'type' in key:
-            type_value = key.split('/type=')[1].split('/')[0]
-            type_metadata = {
-                Constants.TRAFFIC_TYPE_REFERENCE: type_value
-            }
-            metadata.update(type_metadata)
+        if key.split('/')[0] == "waze":
+            if 'type' in key:
+                type_value = key.split('/type=')[1].split('/')[0]
+                type_metadata = {
+                    Constants.TRAFFIC_TYPE_REFERENCE: type_value
+                }
+                metadata.update(type_metadata)
 
-        if 'table' in key:
-            table_value = key.split('/table=')[1].split('/')[0]
-            table_metadata = {
-                Constants.TABLE_NAME_REFERENCE: table_value
-            }
-            metadata.update(table_metadata)
+            if 'table' in key:
+                table_value = key.split('/table=')[1].split('/')[0]
+                table_metadata = {
+                    Constants.TABLE_NAME_REFERENCE: table_value
+                }
+                metadata.update(table_metadata)
 
-        if 'state' in key:
-            state_value = key.split('/state=')[1].split('/')[0]
-            state_metadata = {
-                Constants.STATE_REFERENCE: state_value
+            if 'state' in key:
+                state_value = key.split('/state=')[1].split('/')[0]
+                state_metadata = {
+                    Constants.STATE_REFERENCE: state_value
+                }
+                metadata.update(state_metadata)
+        elif key.split('/')[0] == "cv":
+            data_provider_type_value = key.split('/')[1]
+            data_provider_type_metadata = {
+                Constants.DATA_PROVIDER_REFERENCE = data_provider_type_value
             }
-            metadata.update(state_metadata)
+            metadata.update(data_provider_type_metadata)
+
+            data_type_value = key.split('/')[2]
+            data_type_metadata = {
+                Constants.DATA_TYPE_REFERENCE = data_type_value
+            }
+            metadata.update(data_type_metadata)
+
 
         LoggerUtility.logInfo("METADATA: "+str(metadata))
         return metadata
@@ -88,9 +102,105 @@ class HandleBucketEvent:
             LoggerUtility.logError("Could not index in Elasticsearch")
             raise e
 
+    def __publishCustomMetricsToCloudwatch(self, bucket_name, metadata):
+        try:
+            if bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "waze":
+                cloudwatch_client = boto3.client('cloudwatch')
+                cloudwatch_client.put_metric_data(
+                    Namespace='dot-sdc-waze-submissions-bucket-metric',
+                    MetricData=[
+                        {
+                            'MetricName' : 'Counts by state and traffic type',
+                            'Dimensions' : [
+                                {
+                                    'Name' : 'State',
+                                    'Value': metadata["State"]
+                                },
+                                {
+                                    'Name' : 'TrafficType',
+                                    'Value': metadata["TrafficType"]
+                                }
+                            ],
+                            'Value' : 1,
+                            'Unit': 'Count'
+                        },
+                    ]
+                )
+                if metadata["SizeMiB"] == "0":
+                    cloudwatch_client = boto3.client('cloudwatch')
+                    cloudwatch_client.put_metric_data(
+                        Namespace='dot-sdc-waze-zero-byte-submissions-metric',
+                        MetricData=[
+                            {
+                                'MetricName' : 'Zero Byte Submissions by State and traffic type',
+                                'Dimensions' : [
+                                    {
+                                        'Name' : 'State',
+                                        'Value': metadata["State"]
+                                    },
+                                    {
+                                        'Name' : 'TrafficType',
+                                        'Value': metadata["TrafficType"]
+                                    }
+                                ],
+                                'Value' : 1,
+                                'Unit': 'Count'
+                            },
+                        ]
+                    )
+            elif bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "cv":
+                cloudwatch_client = boto3.client('cloudwatch')
+                cloudwatch_client.put_metric_data(
+                    Namespace='dot-sdc-cv-submissions-bucket-metric',
+                    MetricData=[
+                        {
+                            'MetricName' : 'Counts by provider and datatype',
+                            'Dimensions' : [
+                                {
+                                    'Name' : 'DataProvider',
+                                    'Value': metadata["DataProvider"]
+                                },
+                                {
+                                    'Name' : 'DataType',
+                                    'Value': metadata["DataType"]
+                                }
+                            ],
+                            'Value' : 1,
+                            'Unit': 'Count'
+                        },
+                    ]
+                )
+            elif bucket_name == os.environ["CURATED_BUCKET_NAME"] and metadata["Dataset"] != "manifest":
+                cloudwatch_client = boto3.client('cloudwatch')
+                cloudwatch_client.put_metric_data(
+                    Namespace='dot-sdc-waze-curated-bucket-metric',
+                    MetricData=[
+                        {
+                            'MetricName' : 'Counts by state and table name',
+                            'Dimensions' : [
+                                {
+                                    'Name' : 'State',
+                                    'Value': metadata["State"]
+                                },
+                                {
+                                    'Name' : 'TableName',
+                                    'Value': metadata["TableName"]
+                                }
+                            ],
+                            'Value' : 1,
+                            'Unit': 'Count'
+                        },
+                    ]
+                )
+        except Exception as e:
+            LoggerUtility.logError(e)
+            LoggerUtility.logError("Failed to publish custom cloudwatch metrics")
+            raise e
+
     def handleBucketEvent(self, event, context):
         LoggerUtility.setLevel()
         bucket_name, object_key = self.__fetchS3DetailsFromEvent(event)
         s3_head_object = self.__getS3HeadObject(bucket_name, object_key)
         metadata = self.__createMetadataObject(s3_head_object, object_key)
         self.__pushMetadataToElasticsearch(bucket_name, metadata)
+        self.__publishCustomMetricsToCloudwatch(bucket_name, metadata)
