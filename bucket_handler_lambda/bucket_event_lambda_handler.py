@@ -74,13 +74,13 @@ class HandleBucketEvent:
         elif key.split('/')[0] == "cv":
             data_provider_type_value = key.split('/')[1]
             data_provider_type_metadata = {
-                Constants.DATA_PROVIDER_REFERENCE = data_provider_type_value
+                Constants.DATA_PROVIDER_REFERENCE: data_provider_type_value
             }
             metadata.update(data_provider_type_metadata)
 
             data_type_value = key.split('/')[2]
             data_type_metadata = {
-                Constants.DATA_TYPE_REFERENCE = data_type_value
+                Constants.DATA_TYPE_REFERENCE: data_type_value
             }
             metadata.update(data_type_metadata)
 
@@ -126,7 +126,7 @@ class HandleBucketEvent:
                         },
                     ]
                 )
-                if metadata["SizeMiB"] == "0":
+                if metadata["ContentLength"] == 166:
                     cloudwatch_client = boto3.client('cloudwatch')
                     cloudwatch_client.put_metric_data(
                         Namespace='dot-sdc-waze-zero-byte-submissions-metric',
