@@ -1,9 +1,9 @@
 [
   {
-    "_id": "Data-Lake-Quickstart",
+    "_id": "USDOT-Data-Lake",
     "_type": "dashboard",
     "_source": {
-      "title": "Data Lake Quickstart Metadata",
+      "title": "USDOT Data Lake Dashboard",
       "description": "",
       "panelsJSON": "[{\"col\":1,\"id\":\"Submissions-Size\",\"panelIndex\":1,\"row\":1,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":4,\"id\":\"Curated-Datasets-Size\",\"panelIndex\":2,\"row\":1,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Published-Data-Size\",\"panelIndex\":3,\"row\":1,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":10,\"id\":\"Combined-Size\",\"panelIndex\":4,\"row\":1,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Submissions-Count\",\"panelIndex\":5,\"row\":3,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":4,\"id\":\"Curated-Datasets-Count\",\"panelIndex\":6,\"row\":3,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Published-Data-Count\",\"panelIndex\":7,\"row\":3,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":10,\"id\":\"Combined-Count\",\"panelIndex\":8,\"row\":3,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":1,\"id\":\"Top-Submissions-Summary\",\"panelIndex\":9,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":4,\"id\":\"Top-Curated-Datasets-Summary\",\"panelIndex\":10,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":7,\"id\":\"Top-Published-Data-Summary\",\"panelIndex\":11,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"},{\"col\":10,\"id\":\"Top-Combined-Summary\",\"panelIndex\":12,\"row\":5,\"size_x\":3,\"size_y\":2,\"type\":\"visualization\"}]",
       "optionsJSON": "{\"darkTheme\":false}",
