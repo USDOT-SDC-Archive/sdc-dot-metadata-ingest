@@ -107,7 +107,7 @@ class HandleBucketEvent:
             if bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "waze":
                 cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
-                    Namespace='dot-sdc-waze-submissions-bucket-metric',
+                    Namespace=os.environ["WAZE_SUBMISSIONS_COUNT_METRIC"],
                     MetricData=[
                         {
                             'MetricName' : 'Counts by state and traffic type',
@@ -129,7 +129,7 @@ class HandleBucketEvent:
                 if metadata["ContentLength"] == 166:
                     cloudwatch_client = boto3.client('cloudwatch')
                     cloudwatch_client.put_metric_data(
-                        Namespace='dot-sdc-waze-zero-byte-submissions-metric',
+                        Namespace=os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"],
                         MetricData=[
                             {
                                 'MetricName' : 'Zero Byte Submissions by State and traffic type',
@@ -151,7 +151,7 @@ class HandleBucketEvent:
             elif bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "cv":
                 cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
-                    Namespace='dot-sdc-cv-submissions-bucket-metric',
+                    Namespace=os.environ["CV_SUBMISSIONS_COUNTS_METRIC"],
                     MetricData=[
                         {
                             'MetricName' : 'Counts by provider and datatype',
@@ -173,7 +173,7 @@ class HandleBucketEvent:
             elif bucket_name == os.environ["CURATED_BUCKET_NAME"] and metadata["Dataset"] != "manifest":
                 cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
-                    Namespace='dot-sdc-waze-curated-bucket-metric',
+                    Namespace=os.environ["WAZE_CURATED_COUNTS_METRIC"],
                     MetricData=[
                         {
                             'MetricName' : 'Counts by state and table name',
