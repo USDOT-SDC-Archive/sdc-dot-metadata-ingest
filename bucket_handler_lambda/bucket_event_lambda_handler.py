@@ -170,7 +170,7 @@ class HandleBucketEvent:
                         },
                     ]
                 )
-            elif bucket_name == os.environ["CURATED_BUCKET_NAME"] and metadata["Dataset"] != "manifest":
+            elif bucket_name == os.environ["CURATED_BUCKET_NAME"] and metadata["Dataset"] == "waze":
                 cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
                     Namespace=os.environ["WAZE_CURATED_COUNTS_METRIC"],
