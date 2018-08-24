@@ -47,7 +47,7 @@ This lamda function is triggered by aws-s3-notification whenever an object is pu
 
 ## III. Design Diagram
 
-![sdc-dot-metadata-ingest](images/sdc-dot-waze-data-ingest.png)
+![sdc-dot-metadata-ingest](images/sdc-dot-metadata-ingest.png)
 
 <a name="getting-started"/>
 
@@ -78,15 +78,23 @@ The following instructions describe the procedure to build and deploy the lambda
 #### Environment Variables
 Below are the environment variable needed :- 
 
-SUBMISSIONS_BUCKET_NAME - {name_of_the_bucket_in_which_you_want_to_save_data_fetched_from_waze} 
+SUBMISSIONS_BUCKET_NAME - {name_of_the_bucket_in_which_you_want_to_save_data_fetched_from_waze}
+
 WAZE_URL                - {url_you get_after_membership_of_waze_connected_citizen_program}
-ELASTICSEARCH_ENDPOINT
-ENVIRONMENT_NAME
-PUBLISHED_BUCKET_NAME
-SUBMISSIONS_BUCKET_NAME
-WAZE_CURATED_COUNTS_METRIC
-WAZE_SUBMISSIONS_COUNT_METRIC
-WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC
+
+ELASTICSEARCH_ENDPOINT  - {url_of_elatic_search}
+
+ENVIRONMENT_NAME        -{dev/preprod/prod}
+
+PUBLISHED_BUCKET_NAME   -{name_of_the_published_bucket}
+
+SUBMISSIONS_BUCKET_NAME - {name_of_the_raw_submission_bucket}
+
+WAZE_CURATED_COUNTS_METRIC - {metrics_name_of_curated}
+
+WAZE_SUBMISSIONS_COUNT_METRIC -{metrics_name_of_raw_submission}
+
+WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC - {metrics_name_of_zero_byte}
 
 #### Build Process
 
