@@ -1,5 +1,5 @@
 
-# sdc-dot-waze-data-ingest
+# sdc-dot-metadata-ingest
 This is a lambda function developed by SDC Team for generating the metadata from an s3 key and indexing into Elasticsearch Service.
 
 There are two primary functions serves the need for two different lambda functions:
@@ -33,8 +33,13 @@ TO BE UPDATED
 <a name="overview"/>
 
 ## II. Overview
-This lamda function is triggered by aws-cloudwatch rule at an interval of every two minute.It pull data for all the 53 states
-of U.S.A.(California is divided into three(CA1,CA2,CA3)) and persist this data in aws s3.
+This lamda function is triggered by aws-s3-notification whenever an object is put into raw submission bucket.The primary function of this lambda is given below.
+
+**1.** It creates metadata of the new object and push metadata to elastic search.
+
+**2.** It also push custom metrics for raw submission count,zero byte count to cloud watch metrics.
+
+**3.** It also creates visualization metrics in kibana
 
 <a name="design-diagram"/>
 
