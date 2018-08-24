@@ -78,9 +78,9 @@ The following instructions describe the procedure to build and deploy the lambda
 #### Environment Variables
 Below are the environment variable needed :- 
 
-SUBMISSIONS_BUCKET_NAME - {name_of_the_bucket_in_which_you_want_to_save_data_fetched_from_waze}
+CURATED_BUCKET_NAME - {name_of_the_curate_bucket}
 
-WAZE_URL                - {url_you get_after_membership_of_waze_connected_citizen_program}
+CV_SUBMISSIONS_COUNTS_METRIC  - {metrics_name_of_cv_submission}
 
 ELASTICSEARCH_ENDPOINT  - {url_of_elatic_search}
 
