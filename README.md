@@ -56,7 +56,7 @@ This lamda function is triggered by aws-s3-notification whenever an object is pu
 The following instructions describe the procedure to build and deploy the lambda.
 
 ### Prerequisites
-* For getting the Waze API url you must have membership of connected citizen program of waze.Once your membership is confirmed they will provide a url to which you will use to make API Call. 
+* NA 
 
 ---
 ### ThirdParty library
