@@ -39,7 +39,9 @@ This lamda function is triggered by aws-s3-notification whenever an object is pu
 
 **2.** It also push custom metrics for raw submission count,zero byte and curated count to cloud watch metrics.
 
-**3.** It also creates visualization metrics in kibana
+**3.** It also creates visualization metrics in kibana.
+
+**4.** In case of any failures/errors it push messages in DLQ so that this can be processed later.
 
 <a name="design-diagram"/>
 
