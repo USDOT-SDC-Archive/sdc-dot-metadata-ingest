@@ -33,11 +33,11 @@ TO BE UPDATED
 <a name="overview"/>
 
 ## II. Overview
-This lamda function is triggered by aws-s3-notification whenever an object is put into raw submission bucket.The primary function of this lambda is given below.
+This lamda function is triggered by aws-s3-notification whenever an object is put into raw submission bucket or curated bucket.The primary function of this lambda is given below.
 
 **1.** It creates metadata of the new object and push metadata to elastic search.
 
-**2.** It also push custom metrics for raw submission count,zero byte count to cloud watch metrics.
+**2.** It also push custom metrics for raw submission count,zero byte and curated count to cloud watch metrics.
 
 **3.** It also creates visualization metrics in kibana
 
