@@ -11,7 +11,7 @@ from common.logger_utility import *
 
 class HandleBucketEvent:
 
-    def __fetchS3DetailsFromEvent(self, event):
+    def fetchS3DetailsFromEvent(self, event):
         try:
             sns_message = json.loads(event["Records"][0]["Sns"]["Message"])
             bucket = sns_message["Records"][0]["s3"]["bucket"]["name"]
@@ -25,8 +25,8 @@ class HandleBucketEvent:
             LoggerUtility.logInfo("Object key: " + key)
             return bucket, key
 
-    def __getS3HeadObject(self, bucket_name, object_key):
-        s3_client = boto3.client(Constants.S3_SERVICE_CLIENT)
+    def getS3HeadObject(self, bucket_name, object_key):
+        s3_client = boto3.client('s3', region_name='us-east-1')
         try:
             response = s3_client.head_object(Bucket=bucket_name, Key=object_key)
         except ClientError as e:
@@ -38,7 +38,7 @@ class HandleBucketEvent:
         else:
             return response
 
-    def __createMetadataObject(self, s3_head_object, key):
+    def createMetadataObject(self, s3_head_object, key):
         metadata = {
             Constants.KEY_REFERENCE: key,
             Constants.CONTENT_LENGTH_REFERENCE: s3_head_object[Constants.CONTENT_LENGTH_REFERENCE],
@@ -88,7 +88,7 @@ class HandleBucketEvent:
         LoggerUtility.logInfo("METADATA: "+str(metadata))
         return metadata
 
-    def __pushMetadataToElasticsearch(self, bucket_name, metadata):
+    def pushMetadataToElasticsearch(self, bucket_name, metadata):
         try:
             elasticsearch_endpoint = os.environ[Constants.ES_ENDPOINT_ENV_VAR]
         except KeyError as e:
@@ -102,7 +102,7 @@ class HandleBucketEvent:
             LoggerUtility.logError("Could not index in Elasticsearch")
             raise e
 
-    def __publishCustomMetricsToCloudwatch(self, bucket_name, metadata):
+    def publishCustomMetricsToCloudwatch(self, bucket_name, metadata):
         try:
             if bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "waze":
                 cloudwatch_client = boto3.client('cloudwatch')
@@ -126,7 +126,7 @@ class HandleBucketEvent:
                         },
                     ]
                 )
-                if metadata["ContentLength"] == 166:
+                if metadata["ContentLength"] <= 166:
                     cloudwatch_client = boto3.client('cloudwatch')
                     cloudwatch_client.put_metric_data(
                         Namespace=os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"],
@@ -199,8 +199,8 @@ class HandleBucketEvent:
 
     def handleBucketEvent(self, event, context):
         LoggerUtility.setLevel()
-        bucket_name, object_key = self.__fetchS3DetailsFromEvent(event)
-        s3_head_object = self.__getS3HeadObject(bucket_name, object_key)
-        metadata = self.__createMetadataObject(s3_head_object, object_key)
-        self.__pushMetadataToElasticsearch(bucket_name, metadata)
-        self.__publishCustomMetricsToCloudwatch(bucket_name, metadata)
+        bucket_name, object_key = self.fetchS3DetailsFromEvent(event)
+        s3_head_object = self.getS3HeadObject(bucket_name, object_key)
+        metadata = self.createMetadataObject(s3_head_object, object_key)
+        self.pushMetadataToElasticsearch(bucket_name, metadata)
+        self.publishCustomMetricsToCloudwatch(bucket_name, metadata)

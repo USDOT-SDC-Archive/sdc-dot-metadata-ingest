@@ -1,0 +1,22 @@
+{
+  "Records": [
+    {
+      "EventSource": "aws:sns",
+      "EventVersion": "1.0",
+      "EventSubscriptionArn": "arn:aws:sns:us-east-1:911061262852:dev-dot-sdc-submissions-topic:3ce10b01-ff9f-4f9c-9f84-b4a9f4e9e897",
+      "Sns": {
+        "Type": "Notification",
+        "MessageId": "21e8a1a5-b803-5d9f-951e-f4cfb291c02b",
+        "TopicArn": "arn:aws:sns:us-east-1:911061262852:dev-dot-sdc-submissions-topic",
+        "Subject": "Amazon S3 Notification",
+        "Message": "{\"Records\":[{\"eventVersion\":\"2.1\",\"eventSource\":\"aws:s3\",\"awsRegion\":\"us-east-1\",\"eventTime\":\"2019-05-30T16:44:01.407Z\",\"eventName\":\"ObjectCreated:Put\",\"userIdentity\":{\"principalId\":\"AWS:AROA5IH33UICH56MS6AGM:dev-dot-sdc-waze-data-ingestion\"},\"requestParameters\":{\"sourceIPAddress\":\"54.205.215.119\"},\"responseElements\":{\"x-amz-request-id\":\"A453DC5ACE57BC64\",\"x-amz-id-2\":\"77ehgJNpOMgwxlorVuMmsnL9kDhuHZ9PhEDDPFh/V7kK4OS6Xj9j20ka+BDQ4LnFfDcYLH94mr8=\"},\"s3\":{\"s3SchemaVersion\":\"1.0\",\"configurationId\":\"waze-create\",\"bucket\":{\"name\":\"dev-dot-sdc-raw-submissions-911061262852-us-east-1\",\"ownerIdentity\":{\"principalId\":\"A1MC188DCHAIRL\"},\"arn\":\"arn:aws:s3:::dev-dot-sdc-raw-submissions-911061262852-us-east-1\"},\"object\":{\"key\":\"waze/state%3DLA/type%3Dalert/year%3D2019/month%3D05/day%3D30/hour%3D16/minute%3D42/abe30a9f-2295-4f9c-96e2-333a6e68eb4f.json\",\"size\":299152,\"eTag\":\"ae1067ff8cde0184242210669d3f2431\",\"versionId\":\"o357pxYwT_oUHXboKVS2sKcQD.ZiRDLy\",\"sequencer\":\"005CF008514AD3CB01\"}}}]}",
+        "Timestamp": "2019-05-30T16:44:02.418Z",
+        "SignatureVersion": "1",
+        "Signature": "WigKkesN40p+2U3pcIHtTKlO+qZA2KTmRtu3j9c39jl9uqOqR969J3ZKh15LJ2C1oyfg+sgBdU3kK0loKzAnZQuENA/6iBXYn07l6wfzt/Q0hcG/I/OurflGy5CAfbPhcvtTmreYKZ4BAZEoBAuT0errM9RU+vrSAzfrn6kxLfTByE6fKxg56cpAMwoTBNMz3x184uzvRV6SIYg2XfMEX1bCYwxA3Qvsz1uvgm2Z817aGzvmrUlcezvLFTXK1ry++f/cqSlMtasOfaPNDGVr8VtcAXCF/dkvuNd8EfCbDewuiER+wq8qCt6Z+Is0q3EqH3eJsJEwRoQBAO+juxo72A==",
+        "SigningCertUrl": "https://sns.us-east-1.amazonaws.com/SimpleNotificationService-6aad65c2f9911b05cd53efda11f913f9.pem",
+        "UnsubscribeUrl": "https://sns.us-east-1.amazonaws.com/?Action=Unsubscribe&SubscriptionArn=arn:aws:sns:us-east-1:911061262852:dev-dot-sdc-submissions-topic:3ce10b01-ff9f-4f9c-9f84-b4a9f4e9e897",
+        "MessageAttributes": {}
+      }
+    }
+  ]
+}
