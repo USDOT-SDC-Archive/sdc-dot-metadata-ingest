@@ -32,6 +32,7 @@ def test_fetch_s3_details_from_event_exception():
         metadata_obj = HandleBucketEvent()
         bucket, key = metadata_obj.fetchS3DetailsFromEvent(data)
 
+
 @mock_s3
 def test_get_s3_head_object():
     file_name = "tests/data/event_input.json"
@@ -72,6 +73,7 @@ def test_create_metadata_object_waze_raw():
     metadata_response = metadata_obj.createMetadataObject(head_object, s3_key)
     assert metadata_response == metadata_output
 
+
 @mock_events
 def test_create_metadata_object_waze_curated():
     input_file_name = "tests/data/head_object_input_curated.json"
@@ -86,6 +88,7 @@ def test_create_metadata_object_waze_curated():
     metadata_obj = HandleBucketEvent()
     metadata_response = metadata_obj.createMetadataObject(head_object, s3_key)
     assert metadata_response == metadata_output
+
 
 @mock_events
 def test_create_metadata_object_cv():
@@ -102,6 +105,7 @@ def test_create_metadata_object_cv():
     metadata_response = metadata_obj.createMetadataObject(head_object, s3_key)
     assert metadata_response == metadata_output
 
+
 @mock_events
 def test_push_metadata_to_elasticsearch_endpoint_exception():
     with pytest.raises(Exception):
@@ -113,6 +117,7 @@ def test_push_metadata_to_elasticsearch_endpoint_exception():
         metadata_obj = HandleBucketEvent()
         metadata_obj.es_client = elasticsearch_client
         metadata_obj.pushMetadataToElasticsearch(bucket_name, metadata)
+
 
 @mock_events
 def test_push_metadata_to_elasticsearch_exception():
@@ -126,6 +131,7 @@ def test_push_metadata_to_elasticsearch_exception():
         metadata_obj = HandleBucketEvent()
         metadata_obj.es_client = elasticsearch_client
         metadata_obj.pushMetadataToElasticsearch(bucket_name, metadata)
+
 
 @mock_events
 def test_push_metadata_to_elasticsearch_index_exception():
@@ -143,6 +149,7 @@ def test_push_metadata_to_elasticsearch_index_exception():
         metadata_obj = HandleBucketEvent()
         metadata_obj.es_client = elasticsearch_client
         metadata_obj.pushMetadataToElasticsearch(bucket_name, metadata)
+
 
 @mock_cloudwatch
 def test_push_metrics_to_cloudwatch_exception():
@@ -189,6 +196,7 @@ def test_push_metrics_to_cloudwatch_waze_raw():
     metadata_obj.publishCustomMetricsToCloudwatch(bucket_name, metadata)
     assert True
 
+
 @mock_cloudwatch
 def test_push_metrics_to_cloudwatch_cv():
     metadata_file_name = "tests/data/metadata_output_cv.json"
@@ -221,6 +229,7 @@ def test_push_metrics_to_cloudwatch_cv():
     metadata_obj = HandleBucketEvent()
     metadata_obj.publishCustomMetricsToCloudwatch(bucket_name, metadata)
     assert True
+
 
 @mock_cloudwatch
 def test_push_metrics_to_cloudwatch_zero_byte_submissions():
@@ -255,6 +264,7 @@ def test_push_metrics_to_cloudwatch_zero_byte_submissions():
     metadata_obj.publishCustomMetricsToCloudwatch(bucket_name, metadata)
     assert True
 
+
 @mock_cloudwatch
 def test_push_metrics_to_cloudwatch_waze_curated():
     metadata_file_name = "tests/data/metadata_output_curated.json"
@@ -287,6 +297,7 @@ def test_push_metrics_to_cloudwatch_waze_curated():
     metadata_obj = HandleBucketEvent()
     metadata_obj.publishCustomMetricsToCloudwatch(bucket_name, metadata)
     assert True
+
 
 @mock_events
 def test_handle_bucket_event():
