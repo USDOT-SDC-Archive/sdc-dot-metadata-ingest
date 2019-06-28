@@ -8,6 +8,7 @@ There are two primary functions serves the need for two different lambda functio
 * **bucket-handler-lambda** - generates the metadata and indexes into Elasticsearch
 * **register-kibana-dashboards** - generates the default datalake visualization dashboards
 
+
 <a name="toc"/>
 
 ## Table of Contents
