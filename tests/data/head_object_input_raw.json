@@ -1,0 +1,32 @@
+{
+  "ResponseMetadata": {
+    "RequestId": "587C6DB40872F848",
+    "HostId": "3aLO1yZnNHi0L9SW40gjDVqJXd4pmFcbHq0wDqCfaMQdcdz3kt145VEaoneE4f5fOUIZeMYuL6g=",
+    "HTTPStatusCode": 200,
+    "HTTPHeaders": {
+      "x-amz-id-2": "3aLO1yZnNHi0L9SW40gjDVqJXd4pmFcbHq0wDqCfaMQdcdz3kt145VEaoneE4f5fOUIZeMYuL6g=",
+      "x-amz-request-id": "587C6DB40872F848",
+      "date": "Fri, 28 Jun 2019 07:55:54 GMT",
+      "x-amz-replication-status": "COMPLETED",
+      "last-modified": "Fri, 28 Jun 2019 07:55:52 GMT",
+      "etag": "d2883e0c3ebc1ebc78cac4c49be9415c",
+      "x-amz-meta-current": "true",
+      "x-amz-version-id": "xUnXL4yXq6VZW5IF4xgz5haTV8l6XHFj",
+      "accept-ranges": "bytes",
+      "content-type": "binary/octet-stream",
+      "content-length": "32433",
+      "server": "AmazonS3"
+    },
+    "RetryAttempts": 0
+  },
+  "AcceptRanges": "bytes",
+  "LastModified": "",
+  "ContentLength": 32433,
+  "ETag": "d2883e0c3ebc1ebc78cac4c49be9415c",
+  "VersionId": "xUnXL4yXq6VZW5IF4xgz5haTV8l6XHFj",
+  "ContentType": "binary/octet-stream",
+  "Metadata": {
+    "current": "true"
+  },
+  "ReplicationStatus": "COMPLETED"
+}

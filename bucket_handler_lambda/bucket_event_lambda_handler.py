@@ -103,9 +103,9 @@ class HandleBucketEvent:
             raise e
 
     def publishCustomMetricsToCloudwatch(self, bucket_name, metadata):
+        cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
         try:
             if bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "waze":
-                cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
                     Namespace=os.environ["WAZE_SUBMISSIONS_COUNT_METRIC"],
                     MetricData=[
@@ -127,7 +127,6 @@ class HandleBucketEvent:
                     ]
                 )
                 if metadata["ContentLength"] <= 166:
-                    cloudwatch_client = boto3.client('cloudwatch')
                     cloudwatch_client.put_metric_data(
                         Namespace=os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"],
                         MetricData=[
@@ -149,7 +148,6 @@ class HandleBucketEvent:
                         ]
                     )
             elif bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "cv":
-                cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
                     Namespace=os.environ["CV_SUBMISSIONS_COUNTS_METRIC"],
                     MetricData=[
@@ -171,7 +169,6 @@ class HandleBucketEvent:
                     ]
                 )
             elif bucket_name == os.environ["CURATED_BUCKET_NAME"] and metadata["Dataset"] == "waze":
-                cloudwatch_client = boto3.client('cloudwatch')
                 cloudwatch_client.put_metric_data(
                     Namespace=os.environ["WAZE_CURATED_COUNTS_METRIC"],
                     MetricData=[
