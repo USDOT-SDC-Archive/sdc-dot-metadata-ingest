@@ -1,81 +1,90 @@
 [![Build Status](https://travis-ci.com/usdot-jpo-sdc/sdc-dot-metadata-ingest.svg?branch=master)](https://travis-ci.com/usdot-jpo-sdc/sdc-dot-metadata-ingest)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc_sdc-dot-metadata-ingest&metric=alert_status)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc_sdc-dot-metadata-ingest)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=usdot-jpo-sdc_sdc-dot-metadata-ingest&metric=coverage)](https://sonarcloud.io/dashboard?id=usdot-jpo-sdc_sdc-dot-metadata-ingest)
+
 # sdc-dot-metadata-ingest
+
 This is a lambda function developed by SDC Team for generating the metadata from an s3 key and indexing into Elasticsearch Service.
 
 There are two primary functions serves the need for two different lambda functions:
 * **bucket-handler-lambda** - generates the metadata and indexes into Elasticsearch
 * **register-kibana-dashboards** - generates the default datalake visualization dashboards
 
+The Secure Data Commons (SDC) is a cloud-based analytics platform that enables access to traffic engineers, researchers, and data scientists to various transportation related datasets. The SDC platform is a prototype created as part of the U.S. Department of Transportation (USDOT) research project.  The objective of this prototype is to provide a secure platform, which will enable USDOT and the broader transportation sector to share and collaborate their research, tools, algorithms, analysis, and more around sensitive datasets using modern, commercially available tools without the need to install tools or software locally.  Secure Data Commons (SDC) enables collaborative but controlled integration and analysis of research data at the moderate sensitivity level (PII & CBI).
 
-<a name="toc"/>
 
+<!---                           -->
+<!---     Table of Contents     -->
+<!---                           -->
 ## Table of Contents
 
 [I. Release Notes](#release-notes)
 
-[II. Overview](#overview)
+[II. Usage Example](#usage-example)
 
-[III. Design Diagram](#design-diagram)
+[III. Configuration](#configuration)
 
-[IV. Getting Started](#getting-started)
+[IV. Installation](#installation)
 
-[V. Unit Tests](#unit-tests)
+[V. Design and Architecture](#design-architecture)
 
-[VI. Support](#support)
+[VI. Unit Tests](#unit-tests)
 
----
+[VII.  File Manifest](#file-manifest)
+
+[VIII.  Development Setup](#development-setup)
+
+[IX.  Release History](#release-history)
+
+[X. Contact Information](#contact-information)
+
+[XI. Contributing](#contributing)
+
+[XII. Known Bugs](#known-bugs)
+
+[XIII. Credits and Acknowledgment](#credits-and-acknowledgement)
+
+[XIV.  CODE.GOV Registration Info](#code-gov-registration-info)
+
+
+<!---                           -->
+<!---     Release Notes         -->
+<!---                           -->
 
 <a name="release-notes"/>
 
+## I. Release Notes
 
-## [I. Release Notes](ReleaseNotes.md)
-TO BE UPDATED
 
-<a name="overview"/>
+<!---                           -->
+<!---     Usage Example         -->
+<!---                           -->
 
-## II. Overview
-This lamda function is triggered by aws-s3-notification whenever an object is put into raw submission bucket or curated bucket.The primary function of this lambda is given below.
+<a name="usage-example"/>
 
-**1.** It creates metadata of the new object and push metadata to elastic search.
+## II. Usage Example
 
-**2.** It also push custom metrics for raw submission count,zero byte and curated count to cloud watch metrics.
 
-**3.** It also creates visualization metrics in kibana.
 
-**4.** In case of any failures/errors it push messages in DLQ so that this can be processed later.
+<!---                           -->
+<!---     Configuration         -->
+<!---                           -->
 
-<a name="design-diagram"/>
+<a name="configuration"/>
 
-## III. Design Diagram
+## III. Configuration
 
-![sdc-dot-metadata-ingest](images/sdc-dot-metadata-ingest.png)
 
-<a name="getting-started"/>
+<!---                           -->
+<!---     Installation          -->
+<!---                           -->
 
-## IV. Getting Started
+<a name="installation"/>
+
+## IV. Installation
 
 The following instructions describe the procedure to build and deploy the lambda.
 
-### Prerequisites
-* NA 
-
----
-### ThirdParty library
-
-*NA
-
-### Licensed softwares
-
-*NA
-
-### Programming tool versions
-
-*Python 3.6
-
-
----
 ### Build and Deploy the Lambda
 
 #### Environment Variables
@@ -99,7 +108,65 @@ WAZE_SUBMISSIONS_COUNT_METRIC -{metrics_name_of_raw_submission}
 
 WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC - {metrics_name_of_zero_byte}
 
-#### Build Process
+
+<!---                                 -->
+<!---     Design and Architecture     -->
+<!---                                 -->
+
+<a name="design-architecture"/>
+
+## V. Design and Architecture
+
+
+This lamda function is triggered by aws-s3-notification whenever an object is put into raw submission bucket or curated bucket.The primary function of this lambda is given below.
+
+**1.** It creates metadata of the new object and push metadata to elastic search.
+
+**2.** It also push custom metrics for raw submission count,zero byte and curated count to cloud watch metrics.
+
+**3.** It also creates visualization metrics in kibana.
+
+**4.** In case of any failures/errors it push messages in DLQ so that this can be processed later.
+
+<a name="design-diagram"/>
+
+### III. Design Diagram
+
+![sdc-dot-metadata-ingest](images/sdc-dot-metadata-ingest.png)
+
+
+<!---                           -->
+<!---     Unit Tests          -->
+<!---                           -->
+
+<a name="unit-tests"/>
+
+## VI. Unit Tests
+
+
+
+
+<!---                           -->
+<!---     File Manifest         -->
+<!---                           -->
+
+<a name="file-manifest"/>
+
+## VII. File Manifest
+
+
+<!---                           -->
+<!---     Development Setup     -->
+<!---                           -->
+
+<a name="development-setup"/>
+
+## VIII. Development Setup
+
+### Prerequisites
+*Python 3.6
+
+### Build Process
 
 **Step 1**: Setup virtual environment on your system by foloowing below link
 https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example-deployment-pkg.html#with-s3-example-deployment-pkg-python
@@ -132,20 +199,77 @@ chmod u+x sdc-dot-waze-data-ingest.sh
 
 **Step 5**: Upload the sdc-dot-metadata-ingest.zip generated from Step 4 to a lambda function via aws console.
 
-[Back to top](#toc)
 
----
-<a name="unit-tests"/>
+<!---                           -->
+<!---     Release History       -->
+<!---                           -->
 
-## V. Unit Tests
+<a name="release-history"/>
 
-TO BE UPDATED
+## IX. Release History
 
----
-<a name="support"/>
 
-## VI. Support
+<!---                             -->
+<!---     Contact Information     -->
+<!---                             -->
+
+<a name="contact-information"/>
+
+## X. Contact Information
+
+<!-- Your Name – @YourTwitter – YourEmail@example.com
+Distributed under the XYZ license. See LICENSE for more information.
+https://github.com/yourname/github-link -->
 
 For any queries you can reach to support@securedatacommons.com
----
-[Back to top](#toc)
+
+
+<!---                           -->
+<!---     Contributing          -->
+<!---                           -->
+
+<a name="contributing"/>
+
+## XI. Contributing
+
+
+<!---                           -->
+<!---     Known Bugs            -->
+<!---                           -->
+
+<a name="known-bugs"/>
+
+## XII. Known Bugs
+
+
+<!---                                    -->
+<!---     Credits and Acknowledgment     -->
+<!---                                    -->
+
+<a name="credits-and-acknowledgement"/>
+
+## XIII. Credits and Acknowledgment
+Thank you to the Department of Transportation for funding to develop this project.
+
+
+<!---                                    -->
+<!---     CODE.GOV Registration Info     -->
+<!---                                    -->
+
+<a name="code-gov-registration-info">
+
+## XIV. CODE.GOV Registration Info
+Agency:  DOT
+
+Short Description: This is a lambda function developed by SDC Team for generating the metadata from an s3 key and indexing into Elasticsearch Service.
+
+Status: Beta
+
+Tags: transportation, connected vehicles, intelligent transportation systems
+
+Labor Hours:
+
+Contact Name: support@securedatacommons.com
+
+<!-- Contact Phone: -->
+
