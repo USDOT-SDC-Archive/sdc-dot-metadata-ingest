@@ -130,7 +130,7 @@ This lamda function is triggered by aws-s3-notification whenever an object is pu
 
 <a name="design-diagram"/>
 
-### III. Design Diagram
+### Design Diagram
 
 ![sdc-dot-metadata-ingest](images/sdc-dot-metadata-ingest.png)
 
@@ -168,7 +168,8 @@ This lamda function is triggered by aws-s3-notification whenever an object is pu
 
 ### Build Process
 
-**Step 1**: Setup virtual environment on your system by foloowing below link
+**Step 1**: Setup virtual environment on your system by following below link:
+
 https://docs.aws.amazon.com/lambda/latest/dg/with-s3-example-deployment-pkg.html#with-s3-example-deployment-pkg-python
 
 **Step 2**: Crete a script file with below contents for e.g(sdc-dot-waze-data-ingest.sh)
