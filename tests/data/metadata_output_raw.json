@@ -1,0 +1,12 @@
+{
+  "key": "waze/state=ME/type=jam/year=2019/month=06/day=28/hour=07/minute=54/219ee0da-89c7-40c8-bb3a-1a4175be608f.json",
+  "ContentLength": 32433,
+  "SizeMiB": 0.030930519104003906,
+  "LastModified": "2019-06-28T07:55:52+00:00",
+  "ContentType": "binary/octet-stream",
+  "ETag": "d2883e0c3ebc1ebc78cac4c49be9415c",
+  "Dataset": "waze",
+  "Environment": "dev",
+  "TrafficType": "jam",
+  "State": "ME"
+}
