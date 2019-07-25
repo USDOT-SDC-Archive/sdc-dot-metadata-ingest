@@ -8,6 +8,8 @@ install:
     - pip install coverage
     - pip install mock
     - pip install pytest
+    - pip install psycopg2
+    - pip install google_compute_engine
 branches:
     only:
         - master

@@ -4,12 +4,6 @@
 
 # sdc-dot-metadata-ingest
 
-This is a lambda function developed by SDC Team for generating the metadata from an s3 key and indexing into Elasticsearch Service.
-
-There are two primary functions serves the need for two different lambda functions:
-* **bucket-handler-lambda** - generates the metadata and indexes into Elasticsearch
-* **register-kibana-dashboards** - generates the default datalake visualization dashboards
-
 The Secure Data Commons (SDC) is a cloud-based analytics platform that enables access to traffic engineers, researchers, and data scientists to various transportation related datasets. The SDC platform is a prototype created as part of the U.S. Department of Transportation (USDOT) research project.  The objective of this prototype is to provide a secure platform, which will enable USDOT and the broader transportation sector to share and collaborate their research, tools, algorithms, analysis, and more around sensitive datasets using modern, commercially available tools without the need to install tools or software locally.  Secure Data Commons (SDC) enables collaborative but controlled integration and analysis of research data at the moderate sensitivity level (PII & CBI).
 
 
