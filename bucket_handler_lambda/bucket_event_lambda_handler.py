@@ -12,6 +12,11 @@ from common.logger_utility import *
 class HandleBucketEvent:
 
     def fetchS3DetailsFromEvent(self, event):
+        """
+        Pull bucket name and key from an event.
+        :param event: Json object
+        :return: bucket, key
+        """
         try:
             sns_message = json.loads(event["Records"][0]["Sns"]["Message"])
             bucket = sns_message["Records"][0]["s3"]["bucket"]["name"]
@@ -26,6 +31,12 @@ class HandleBucketEvent:
             return bucket, key
 
     def getS3HeadObject(self, bucket_name, object_key):
+        """
+
+        :param bucket_name:
+        :param object_key:
+        :return:
+        """
         s3_client = boto3.client('s3', region_name='us-east-1')
         try:
             response = s3_client.head_object(Bucket=bucket_name, Key=object_key)
