@@ -3,14 +3,7 @@ language: python
 python:
     - 3.6
 install:
-    - pip install boto3
-    - pip install utils
-    - pip install moto
-    - pip install coverage
-    - pip install mock
-    - pip install pytest
-    - pip install elasticsearch
-    - pip install google_compute_engine
+    - pip install -r requirements.txt
 branches:
     only:
         - master

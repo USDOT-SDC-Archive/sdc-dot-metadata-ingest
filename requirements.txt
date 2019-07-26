@@ -14,11 +14,13 @@ chardet==3.0.4
 coverage==4.5.3
 cryptography==2.7
 DateTime==4.3
+distro==1.4.0
 docker==4.0.2
 docutils==0.14
 ecdsa==0.13.2
 elasticsearch==7.0.2
 future==0.17.1
+google-compute-engine==2.8.13
 idna==2.8
 importlib-metadata==0.18
 Jinja2==2.10.1
