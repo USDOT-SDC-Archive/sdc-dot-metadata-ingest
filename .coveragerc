@@ -3,6 +3,7 @@ branch = True
 include=
     # Include the following source code folders
     **/bucket_handler_lambda/**
+    **/dashboard_registry_lambda/**
     **/tests/**
 
 [report]
