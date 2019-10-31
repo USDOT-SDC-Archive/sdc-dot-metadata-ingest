@@ -1,15 +1,17 @@
 import os
-from common.constants import *
-from common.logger_utility import *
+
 from aws_requests_auth.aws_auth import AWSRequestsAuth
-from elasticsearch import Elasticsearch, RequestsHttpConnection, ElasticsearchException
+from elasticsearch import Elasticsearch, RequestsHttpConnection
+
+from common.constants import Constants
+from common.logger_utility import LoggerUtility
 
 
 class ElasticsearchClient:
 
     @staticmethod
-    def getClient(elasticsearch_endpoint):
-        LoggerUtility.setLevel()
+    def get_client(elasticsearch_endpoint):
+        LoggerUtility.set_level()
         try:
             awsauth = AWSRequestsAuth(
                 aws_access_key=os.environ[Constants.ACCESS_KEY_ENV_VAR],
@@ -20,8 +22,8 @@ class ElasticsearchClient:
                 aws_service=Constants.ELASTICSEARCH_SERVICE_CLIENT
             )
         except KeyError as e:
-            LoggerUtility.logError(str(e) + " not configured")
-            LoggerUtility.logError("Failed to register kibana dashboard")
+            LoggerUtility.log_error(str(e) + " not configured")
+            LoggerUtility.log_error("Failed to register kibana dashboard")
             raise e
 
         return Elasticsearch(
