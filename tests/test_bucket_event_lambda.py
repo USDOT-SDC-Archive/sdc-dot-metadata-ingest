@@ -1,12 +1,32 @@
-from moto import mock_cloudwatch, mock_events, mock_s3
-import sys
-import os
 import datetime
-from dateutil.tz import tzutc
+import json
+import os
+import sys
+
+import boto3
 import pytest
+from dateutil.tz import tzutc
 from mock import Mock
+from moto import mock_cloudwatch, mock_events, mock_s3
+
 sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
-from bucket_handler_lambda.bucket_event_lambda_handler import *
+from bucket_handler_lambda.bucket_event_lambda_handler import HandleBucketEvent
+
+os.environ["SUBMISSIONS_BUCKET_NAME"] = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
+os.environ["WAZE_SUBMISSIONS_COUNT_METRIC"] = "dev-dot-sdc-waze-submissions-bucket-metric"
+os.environ[
+    "ELASTICSEARCH_ENDPOINT"] = "search-dev-dot-sdc-datalake-es-w7hstpzlwyebvezqnlrbzie4su.us-east-1.es.amazonaws.com"
+os.environ["ENVIRONMENT_NAME"] = "dev"
+os.environ["CV_SUBMISSIONS_COUNTS_METRIC"] = "dev-dot-sdc-cv-submissions-bucket-metric"
+os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"] = "dev-dot-sdc-cv-submissions-bucket-metric"
+os.environ["CURATED_BUCKET_NAME"] = "dev-dot-sdc-curated-911061262852-us-east-1"
+os.environ["WAZE_CURATED_COUNTS_METRIC"] = "dev-dot-sdc-waze-curated-bucket-metric"
+
+# aws login configuration
+os.environ["AWS_ACCESS_KEY_ID"] = "thisisaccesskey"
+os.environ["AWS_SECRET_ACCESS_KEY"] = "thisissecretkey"
+os.environ["AWS_SESSION_TOKEN"] = "thisissessiontokenvariable"
+os.environ["AWS_REGION"] = "us-east-1"
 
 
 @mock_s3
@@ -26,11 +46,9 @@ def test_fetch_s3_details_from_event():
 def test_fetch_s3_details_from_event_exception():
     with pytest.raises(Exception):
         file_name = "tests/data/event_input.json"
-        bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-        s3_key = "waze/state=LA/type=alert/year=2019/month=05/day=30/hour=16/minute=42/abe30a9f-2295-4f9c-96e2-333a6e68eb4f.json"
         data = open(file_name, 'r').read()
         metadata_obj = HandleBucketEvent()
-        bucket, key = metadata_obj.fetch_s3_details_from_event(data)
+        metadata_obj.fetch_s3_details_from_event(data)
 
 
 @mock_s3
@@ -42,14 +60,13 @@ def test_get_s3_head_object():
     s3_client.create_bucket(Bucket=bucket_name)
     s3_client.put_object(Bucket=bucket_name, Body=file_name, Key=s3_key)
     metadata_obj = HandleBucketEvent()
-    response = metadata_obj.get_s3_head_object(bucket_name, s3_key)
+    metadata_obj.get_s3_head_object(bucket_name, s3_key)
     assert True
 
 
 @mock_s3
 def test_get_s3_head_object_exception():
     with pytest.raises(Exception):
-        file_name = "tests/data/event_input.json"
         bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
         s3_key = "waze/state=LA/type=alert/year=2019/month=05/day=30/hour=16/minute=42/abe30a9f-2295-4f9c-96e2-333a6e68eb4f.json"
         s3_client = boto3.client('s3', region_name='us-east-1')
@@ -68,7 +85,6 @@ def test_create_metadata_object_waze_raw():
     head_object["LastModified"] = datetime.datetime(2019, 6, 28, 7, 55, 52, tzinfo=tzutc())
     metadata = open(metadata_output_file_name, 'r').read()
     metadata_output = json.loads(metadata)
-    os.environ["ENVIRONMENT_NAME"] = "dev"
     metadata_obj = HandleBucketEvent()
     metadata_response = metadata_obj.create_metadata_object(head_object, s3_key)
     assert metadata_response == metadata_output
@@ -84,7 +100,6 @@ def test_create_metadata_object_waze_curated():
     head_object["LastModified"] = datetime.datetime(2019, 6, 28, 7, 55, 50, tzinfo=tzutc())
     metadata = open(metadata_output_file_name, 'r').read()
     metadata_output = json.loads(metadata)
-    os.environ["ENVIRONMENT_NAME"] = "dev"
     metadata_obj = HandleBucketEvent()
     metadata_response = metadata_obj.create_metadata_object(head_object, s3_key)
     assert metadata_response == metadata_output
@@ -100,7 +115,6 @@ def test_create_metadata_object_cv():
     head_object["LastModified"] = datetime.datetime(2019, 6, 28, 5, 00, 52, tzinfo=tzutc())
     metadata = open(metadata_output_file_name, 'r').read()
     metadata_output = json.loads(metadata)
-    os.environ["ENVIRONMENT_NAME"] = "dev"
     metadata_obj = HandleBucketEvent()
     metadata_response = metadata_obj.create_metadata_object(head_object, s3_key)
     assert metadata_response == metadata_output
@@ -126,7 +140,6 @@ def test_push_metadata_to_elasticsearch_exception():
         bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
         data = open(metadata_file_name, 'r').read()
         metadata = json.loads(data)
-        os.environ["ELASTICSEARCH_ENDPOINT"] = "search-dev-dot-sdc-datalake-es-w7hstpzlwyebvezqnlrbzie4su.us-east-1.es.amazonaws.com"
         elasticsearch_client = Mock()
         metadata_obj = HandleBucketEvent()
         metadata_obj.es_client = elasticsearch_client
@@ -140,11 +153,6 @@ def test_push_metadata_to_elasticsearch_index_exception():
         bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
         data = open(metadata_file_name, 'r').read()
         metadata = json.loads(data)
-        os.environ["AWS_ACCESS_KEY_ID"] = "thisisaccesskey"
-        os.environ["AWS_SECRET_ACCESS_KEY"] = "thisissecretkey"
-        os.environ["AWS_SESSION_TOKEN"] = "thisissessiontokenvariable"
-        os.environ["AWS_REGION"] = "us-east-1"
-        os.environ["ELASTICSEARCH_ENDPOINT"] = "search-dev-dot-sdc-datalake-es-w7hstpzlwyebvezqnlrbzie4su.us-east-1.es.amazonaws.com"
         elasticsearch_client = Mock()
         metadata_obj = HandleBucketEvent()
         metadata_obj.es_client = elasticsearch_client
@@ -152,23 +160,29 @@ def test_push_metadata_to_elasticsearch_index_exception():
 
 
 @mock_cloudwatch
-def test_push_metrics_to_cloudwatch_exception():
-    with pytest.raises(Exception):
-        metadata_file_name = "tests/data/metadata_output_curated.json"
-        bucket_name = "dev-dot-sdc-curated-911061262852-us-east-1"
-        data = open(metadata_file_name, 'r').read()
-        metadata = json.loads(data)
-        metadata_obj = HandleBucketEvent()
-        metadata_obj.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
-        assert True
+def test_push_metadata_to_elasticsearch():
+    elasticsearch_endpoint = None
+    if os.environ.get("SUBMISSIONS_BUCKET_NAME", None):
+        elasticsearch_endpoint = os.environ.pop("ELASTICSEARCH_ENDPOINT")
+    metadata_file_name = "tests/data/metadata_output_curated.json"
+    bucket_name = "dev-dot-sdc-curated-911061262852-us-east-1"
+    data = open(metadata_file_name, 'r').read()
+    metadata = json.loads(data)
+    metadata_obj = HandleBucketEvent()
+
+    try:
+        with pytest.raises(KeyError):
+            metadata_obj.push_metadata_to_elasticsearch(bucket_name, metadata)
+        pass
+
+    finally:
+        os.environ["ELASTICSEARCH_ENDPOINT"] = elasticsearch_endpoint
 
 
 @mock_cloudwatch
 def test_push_metrics_to_cloudwatch_waze_raw():
     metadata_file_name = "tests/data/metadata_output_raw.json"
     bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["SUBMISSIONS_BUCKET_NAME"] = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["WAZE_SUBMISSIONS_COUNT_METRIC"] = "dev-dot-sdc-waze-submissions-bucket-metric"
     data = open(metadata_file_name, 'r').read()
     metadata = json.loads(data)
     cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
@@ -201,8 +215,6 @@ def test_push_metrics_to_cloudwatch_waze_raw():
 def test_push_metrics_to_cloudwatch_cv():
     metadata_file_name = "tests/data/metadata_output_cv.json"
     bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["SUBMISSIONS_BUCKET_NAME"] = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["CV_SUBMISSIONS_COUNTS_METRIC"] = "dev-dot-sdc-cv-submissions-bucket-metric"
     data = open(metadata_file_name, 'r').read()
     metadata = json.loads(data)
     cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
@@ -235,8 +247,6 @@ def test_push_metrics_to_cloudwatch_cv():
 def test_push_metrics_to_cloudwatch_zero_byte_submissions():
     metadata_file_name = "tests/data/metadata_output_zero_byte.json"
     bucket_name = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["SUBMISSIONS_BUCKET_NAME"] = "dev-dot-sdc-raw-submissions-911061262852-us-east-1"
-    os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"] = "dev-dot-sdc-cv-submissions-bucket-metric"
     data = open(metadata_file_name, 'r').read()
     metadata = json.loads(data)
     cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
@@ -269,8 +279,6 @@ def test_push_metrics_to_cloudwatch_zero_byte_submissions():
 def test_push_metrics_to_cloudwatch_waze_curated():
     metadata_file_name = "tests/data/metadata_output_curated.json"
     bucket_name = "dev-dot-sdc-curated-911061262852-us-east-1"
-    os.environ["CURATED_BUCKET_NAME"] = "dev-dot-sdc-curated-911061262852-us-east-1"
-    os.environ["WAZE_CURATED_COUNTS_METRIC"] = "dev-dot-sdc-waze-curated-bucket-metric"
     data = open(metadata_file_name, 'r').read()
     metadata = json.loads(data)
     cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
@@ -303,15 +311,3 @@ def test_push_metrics_to_cloudwatch_waze_curated():
 def test_handle_bucket_event():
     with pytest.raises(Exception):
         assert HandleBucketEvent().handle_bucket_event(None) is None
-
-
-
-
-
-
-
-
-
-
-
-

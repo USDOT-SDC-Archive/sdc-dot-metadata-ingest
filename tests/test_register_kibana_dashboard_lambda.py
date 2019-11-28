@@ -4,12 +4,12 @@ import pytest
 
 from dashboard_registry_lambda.register_kibana_dashboard import RegisterKibanaDashboard
 
+os.environ["SUBMISSIONS_BUCKET_NAME"] = "submissions_bucket_name"
+os.environ["CURATED_BUCKET_NAME"] = "curated_bucket_name"
+os.environ["PUBLISHED_BUCKET_NAME"] = "published_bucket_name"
+
 
 def test_create_metadata_visualizations():
-    os.environ["SUBMISSIONS_BUCKET_NAME"] = "submissions_bucket_name"
-    os.environ["CURATED_BUCKET_NAME"] = "curated_bucket_name"
-    os.environ["PUBLISHED_BUCKET_NAME"] = "published_bucket_name"
-
     class MockEsClient:
         def index(self, *args, **kwargs):
             pass
