@@ -1,10 +1,10 @@
 {
-  "key": "waze/version=20180720/content/state=IA/table=alert/projection=redshift/year=2019/month=06/day=28/hour=07/minute=55/79a3a32d-73a3-4152-adf7-495929d50c3e.csv.gz",
+  "key": "waze/version=20180720/content/state=IA/table=alert/projection=redshift/year=2010/month=06/day=28/hour=07/minute=55/foo4.csv.gz",
   "ContentLength": 112305,
   "SizeMiB": 0.1071023941040039,
-  "LastModified": "2019-06-28T07:55:50+00:00",
+  "LastModified": "2010-06-28T07:55:50+00:00",
   "ContentType": "binary/octet-stream",
-  "ETag": "95e27a42f9c96e01817abb4ae74cb523",
+  "ETag": "etag1",
   "Dataset": "waze",
   "Environment": "dev",
   "TableName": "alert",

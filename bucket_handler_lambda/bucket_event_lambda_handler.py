@@ -1,17 +1,19 @@
-import os
-import boto3
 import json
+import os
 import urllib.parse
-from elasticsearch import ElasticsearchException
+
+import boto3
 from botocore.exceptions import ClientError
-from common.elasticsearch_client import *
-from common.constants import *
-from common.logger_utility import *
+from elasticsearch import ElasticsearchException
+
+from common.constants import Constants
+from common.elasticsearch_client import ElasticsearchClient
+from common.logger_utility import LoggerUtility
 
 
 class HandleBucketEvent:
 
-    def fetchS3DetailsFromEvent(self, event):
+    def fetch_s3_details_from_event(self, event):
         """
         Pull bucket name and key from an event.
         :param event: Json object
@@ -22,15 +24,15 @@ class HandleBucketEvent:
             bucket = sns_message["Records"][0]["s3"]["bucket"]["name"]
             key = urllib.parse.unquote_plus(sns_message["Records"][0]["s3"]["object"]["key"])
         except Exception as e:
-            LoggerUtility.logError(str(e))
-            LoggerUtility.logError("Failed to process the event")
+            LoggerUtility.log_error(str(e))
+            LoggerUtility.log_error("Failed to process the event")
             raise e
         else:
-            LoggerUtility.logInfo("Bucket name: " + bucket)
-            LoggerUtility.logInfo("Object key: " + key)
+            LoggerUtility.log_info("Bucket name: " + bucket)
+            LoggerUtility.log_info("Object key: " + key)
             return bucket, key
 
-    def getS3HeadObject(self, bucket_name, object_key):
+    def get_s3_head_object(self, bucket_name, object_key):
         """
 
         :param bucket_name:
@@ -41,19 +43,19 @@ class HandleBucketEvent:
         try:
             response = s3_client.head_object(Bucket=bucket_name, Key=object_key)
         except ClientError as e:
-            LoggerUtility.logError(e)
-            LoggerUtility.logError('Error getting object {} from bucket {}. Make sure they exist, '
+            LoggerUtility.log_error(e)
+            LoggerUtility.log_error('Error getting object {} from bucket {}. Make sure they exist, '
                                    'your bucket is in the same region as this function and necessary permissions '
                                    'have been granted.'.format(object_key, bucket_name))
             raise e
         else:
             return response
 
-    def createMetadataObject(self, s3_head_object, key):
+    def create_metadata_object(self, s3_head_object, key):
         metadata = {
             Constants.KEY_REFERENCE: key,
             Constants.CONTENT_LENGTH_REFERENCE: s3_head_object[Constants.CONTENT_LENGTH_REFERENCE],
-            Constants.SIZE_MIB_REFERENCE: s3_head_object[Constants.CONTENT_LENGTH_REFERENCE] / 1024**2,
+            Constants.SIZE_MIB_REFERENCE: s3_head_object[Constants.CONTENT_LENGTH_REFERENCE] / 1024 ** 2,
             Constants.LAST_MODIFIED_REFERENCE: s3_head_object[Constants.LAST_MODIFIED_REFERENCE].isoformat(),
             Constants.CONTENT_TYPE_REFERENCE: s3_head_object[Constants.CONTENT_TYPE_REFERENCE],
             Constants.ETAG_REFERENCE: s3_head_object[Constants.ETAG_REFERENCE],
@@ -95,25 +97,24 @@ class HandleBucketEvent:
             }
             metadata.update(data_type_metadata)
 
-
-        LoggerUtility.logInfo("METADATA: "+str(metadata))
+        LoggerUtility.log_info("METADATA: " + str(metadata))
         return metadata
 
-    def pushMetadataToElasticsearch(self, bucket_name, metadata):
+    def push_metadata_to_elasticsearch(self, bucket_name, metadata):
         try:
             elasticsearch_endpoint = os.environ[Constants.ES_ENDPOINT_ENV_VAR]
         except KeyError as e:
-            LoggerUtility.logError(str(e) + " not configured")
+            LoggerUtility.log_error(str(e) + " not configured")
             raise e
-        es_client = ElasticsearchClient.getClient(elasticsearch_endpoint)
+        es_client = ElasticsearchClient.get_client(elasticsearch_endpoint)
         try:
             es_client.index(index=Constants.DEFAULT_INDEX_ID, doc_type=bucket_name, body=json.dumps(metadata))
         except ElasticsearchException as e:
-            LoggerUtility.logError(e)
-            LoggerUtility.logError("Could not index in Elasticsearch")
+            LoggerUtility.log_error(e)
+            LoggerUtility.log_error("Could not index in Elasticsearch")
             raise e
 
-    def publishCustomMetricsToCloudwatch(self, bucket_name, metadata):
+    def publish_custom_metrics_to_cloudwatch(self, bucket_name, metadata):
         cloudwatch_client = boto3.client('cloudwatch', region_name='us-east-1')
         try:
             if bucket_name == os.environ["SUBMISSIONS_BUCKET_NAME"] and metadata["Dataset"] == "waze":
@@ -121,18 +122,18 @@ class HandleBucketEvent:
                     Namespace=os.environ["WAZE_SUBMISSIONS_COUNT_METRIC"],
                     MetricData=[
                         {
-                            'MetricName' : 'Counts by state and traffic type',
-                            'Dimensions' : [
+                            'MetricName': 'Counts by state and traffic type',
+                            'Dimensions': [
                                 {
-                                    'Name' : 'State',
+                                    'Name': 'State',
                                     'Value': metadata["State"]
                                 },
                                 {
-                                    'Name' : 'TrafficType',
+                                    'Name': 'TrafficType',
                                     'Value': metadata["TrafficType"]
                                 }
                             ],
-                            'Value' : 1,
+                            'Value': 1,
                             'Unit': 'Count'
                         },
                     ]
@@ -142,18 +143,18 @@ class HandleBucketEvent:
                         Namespace=os.environ["WAZE_ZERO_BYTE_SUBMISSIONS_COUNT_METRIC"],
                         MetricData=[
                             {
-                                'MetricName' : 'Zero Byte Submissions by State and traffic type',
-                                'Dimensions' : [
+                                'MetricName': 'Zero Byte Submissions by State and traffic type',
+                                'Dimensions': [
                                     {
-                                        'Name' : 'State',
+                                        'Name': 'State',
                                         'Value': metadata["State"]
                                     },
                                     {
-                                        'Name' : 'TrafficType',
+                                        'Name': 'TrafficType',
                                         'Value': metadata["TrafficType"]
                                     }
                                 ],
-                                'Value' : 1,
+                                'Value': 1,
                                 'Unit': 'Count'
                             },
                         ]
@@ -163,18 +164,18 @@ class HandleBucketEvent:
                     Namespace=os.environ["CV_SUBMISSIONS_COUNTS_METRIC"],
                     MetricData=[
                         {
-                            'MetricName' : 'Counts by provider and datatype',
-                            'Dimensions' : [
+                            'MetricName': 'Counts by provider and datatype',
+                            'Dimensions': [
                                 {
-                                    'Name' : 'DataProvider',
+                                    'Name': 'DataProvider',
                                     'Value': metadata["DataProvider"]
                                 },
                                 {
-                                    'Name' : 'DataType',
+                                    'Name': 'DataType',
                                     'Value': metadata["DataType"]
                                 }
                             ],
-                            'Value' : 1,
+                            'Value': 1,
                             'Unit': 'Count'
                         },
                     ]
@@ -184,31 +185,31 @@ class HandleBucketEvent:
                     Namespace=os.environ["WAZE_CURATED_COUNTS_METRIC"],
                     MetricData=[
                         {
-                            'MetricName' : 'Counts by state and table name',
-                            'Dimensions' : [
+                            'MetricName': 'Counts by state and table name',
+                            'Dimensions': [
                                 {
-                                    'Name' : 'State',
+                                    'Name': 'State',
                                     'Value': metadata["State"]
                                 },
                                 {
-                                    'Name' : 'TableName',
+                                    'Name': 'TableName',
                                     'Value': metadata["TableName"]
                                 }
                             ],
-                            'Value' : 1,
+                            'Value': 1,
                             'Unit': 'Count'
                         },
                     ]
                 )
         except Exception as e:
-            LoggerUtility.logError(e)
-            LoggerUtility.logError("Failed to publish custom cloudwatch metrics")
+            LoggerUtility.log_error(e)
+            LoggerUtility.log_error("Failed to publish custom cloudwatch metrics")
             raise e
 
-    def handleBucketEvent(self, event, context):
-        LoggerUtility.setLevel()
-        bucket_name, object_key = self.fetchS3DetailsFromEvent(event)
-        s3_head_object = self.getS3HeadObject(bucket_name, object_key)
-        metadata = self.createMetadataObject(s3_head_object, object_key)
-        self.pushMetadataToElasticsearch(bucket_name, metadata)
-        self.publishCustomMetricsToCloudwatch(bucket_name, metadata)
+    def handle_bucket_event(self, event):
+        LoggerUtility.set_level()
+        bucket_name, object_key = self.fetch_s3_details_from_event(event)
+        s3_head_object = self.get_s3_head_object(bucket_name, object_key)
+        metadata = self.create_metadata_object(s3_head_object, object_key)
+        self.push_metadata_to_elasticsearch(bucket_name, metadata)
+        self.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
