@@ -17,6 +17,7 @@ class RegisterKibanaDashboard:
         submission_bucket_name = os.environ["SUBMISSIONS_BUCKET_NAME"]
         curated_dataset_bucket_name = os.environ["CURATED_BUCKET_NAME"]
         published_dataset_bucket_name = os.environ["PUBLISHED_BUCKET_NAME"]
+        replace_value = "_type: "
         es_client.index(index=Constants.KIBANA_INDEX_NAME, doc_type=Constants.CONFIG_DOCUMENT_TYPE, id='5.1.1',
                         body=json.dumps({Constants.DEFAULT_INDEX_REFERENCE: Constants.DEFAULT_INDEX_ID}))
         data = {
@@ -32,12 +33,12 @@ class RegisterKibanaDashboard:
             source = json.dumps(visualization['_source'])
             if 'visualization' in doc_type:
                 if 'datalake-submissions*' in source:
-                    source = re.sub("_type: datalake-submissions[*]", "_type: " + submission_bucket_name, source)
+                    source = re.sub("_type: datalake-submissions[*]", replace_value + submission_bucket_name, source)
                 elif 'datalake-curated-datasets*' in source:
-                    source = re.sub("_type: datalake-curated-datasets[*]", "_type: " + curated_dataset_bucket_name,
+                    source = re.sub("_type: datalake-curated-datasets[*]", replace_value + curated_dataset_bucket_name,
                                     source)
                 elif 'datalake-published-data*' in source:
-                    source = re.sub("_type: datalake-published-data[*]", "_type: " + published_dataset_bucket_name,
+                    source = re.sub("_type: datalake-published-data[*]", replace_value + published_dataset_bucket_name,
                                     source)
 
             es_client.index(
