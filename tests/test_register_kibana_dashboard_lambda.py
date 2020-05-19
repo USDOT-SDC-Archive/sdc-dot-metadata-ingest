@@ -12,6 +12,7 @@ os.environ["PUBLISHED_BUCKET_NAME"] = "published_bucket_name"
 def test_create_metadata_visualizations():
     class MockEsClient:
         def index(self, *args, **kwargs):
+            """left empty because method for a mock class"""
             pass
 
     register_kibana_dashboard = RegisterKibanaDashboard()
@@ -31,6 +32,7 @@ def test_register_kibana_dashboard_key_error():
 
 def test_register_kibana_dashboard():
     def mock_create_metadata_visualizations(*args, **kwargs):
+        """left empty because mock function"""
         pass
 
     register_kibana_dashboard = RegisterKibanaDashboard()
