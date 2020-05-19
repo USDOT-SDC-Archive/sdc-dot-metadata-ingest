@@ -228,7 +228,6 @@ def test_push_metrics_to_cloudwatch_cv():
     )
     metadata_obj = HandleBucketEvent()
     metadata_obj.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
-    assert True
 
 
 @mock_cloudwatch
