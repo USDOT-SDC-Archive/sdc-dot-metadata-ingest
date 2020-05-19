@@ -26,7 +26,9 @@ os.environ["AWS_REGION"] = "us-east-1"
 
 
 event_input_file_name = "tests/data/event_input.json"
-s3_key_1 = "waze/state=LA/type=alert/year=2010/month=05/day=30/hour=16/minute=42/blahblah3.json"
+
+# key built from the tests/data/event_input.json data
+s3_key_event_input = "waze/state=LA/type=alert/year=2010/month=05/day=30/hour=16/minute=42/blahblah3.json"
 metadata_file_name = "tests/data/metadata_output_raw.json"
 
 @mock_s3
@@ -37,7 +39,7 @@ def test_fetch_s3_details_from_event():
     metadata_obj = HandleBucketEvent()
     bucket, key = metadata_obj.fetch_s3_details_from_event(data_obj)
     assert bucket == bucket_name
-    assert key == s3_key_1
+    assert key == s3_key_event_input
 
 
 @mock_s3
@@ -53,10 +55,9 @@ def test_get_s3_head_object():
     bucket_name = "bucket_name"
     s3_client = boto3.client('s3', region_name='us-east-1')
     s3_client.create_bucket(Bucket=bucket_name)
-    s3_client.put_object(Bucket=bucket_name, Body=event_input_file_name, Key=s3_key_1)
+    s3_client.put_object(Bucket=bucket_name, Body=event_input_file_name, Key=s3_key_event_input)
     metadata_obj = HandleBucketEvent()
-    metadata_obj.get_s3_head_object(bucket_name, s3_key_1)
-    assert True
+    metadata_obj.get_s3_head_object(bucket_name, s3_key_event_input)
 
 
 @mock_s3
@@ -66,7 +67,7 @@ def test_get_s3_head_object_exception():
         s3_client = boto3.client('s3', region_name='us-east-1')
         s3_client.create_bucket(Bucket=bucket_name)
         metadata_obj = HandleBucketEvent()
-        metadata_obj.get_s3_head_object(bucket_name, s3_key_1)
+        metadata_obj.get_s3_head_object(bucket_name, s3_key_event_input)
 
 
 @mock_events
@@ -196,7 +197,6 @@ def test_push_metrics_to_cloudwatch_waze_raw():
     )
     metadata_obj = HandleBucketEvent()
     metadata_obj.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
-    assert True
 
 
 @mock_cloudwatch
@@ -260,7 +260,6 @@ def test_push_metrics_to_cloudwatch_zero_byte_submissions():
     )
     metadata_obj = HandleBucketEvent()
     metadata_obj.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
-    assert True
 
 
 @mock_cloudwatch
@@ -292,7 +291,6 @@ def test_push_metrics_to_cloudwatch_waze_curated():
     )
     metadata_obj = HandleBucketEvent()
     metadata_obj.publish_custom_metrics_to_cloudwatch(bucket_name, metadata)
-    assert True
 
 
 @mock_events
